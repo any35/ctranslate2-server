@@ -17,12 +17,12 @@ Establish the project skeleton, logging, and configuration management.
 ## Phase 2: CTranslate2 Model Wrapper
 Implement the safe Rust wrapper for the inference engine.
 
-- [ ] Task: Implement ModelManager Struct
-    - [ ] Subtask: Add `ct2rs` dependency.
-    - [ ] Subtask: Define `ModelManager` and `ModelType` enum (NLLB, T5, Whisper).
-    - [ ] Subtask: Write integration tests for loading a dummy/small model.
-    - [ ] Subtask: Implement `ModelManager::new()` and `load_model()`.
-- [ ] Task: Implement Inference Logic (Text Generation)
+- [x] Task: Implement ModelManager Struct [2e1fbcf]
+    - [x] Subtask: Add `ct2rs` dependency.
+    - [x] Subtask: Define `ModelManager` and `ModelType` enum (NLLB, T5, Whisper).
+    - [x] Subtask: Write integration tests for loading a dummy/small model.
+    - [x] Subtask: Implement `ModelManager::new()` and `load_model()`.
+- [~] Task: Implement Inference Logic (Text Generation)
     - [ ] Subtask: Define trait/method for `predict` or `chat`.
     - [ ] Subtask: Write tests for generating text from a loaded model.
     - [ ] Subtask: Implement `generate` method using `ct2rs` APIs, wrapping blocking calls in `spawn_blocking` if necessary.
