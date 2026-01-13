@@ -7,11 +7,11 @@ Establish the project skeleton, logging, and configuration management.
     - [x] Subtask: Add dependencies (`axum`, `tokio`, `tracing`, `tracing-subscriber`).
     - [x] Subtask: Write tests for a basic `/health` endpoint.
     - [x] Subtask: Implement `main.rs` to setup `tracing` and start `axum` server.
-- [ ] Task: Implement Configuration System
-    - [ ] Subtask: Add `config`, `serde`, `clap` dependencies.
-    - [ ] Subtask: Define `AppConfig` struct.
-    - [ ] Subtask: Write tests for loading config from defaults, file, env, and args.
-    - [ ] Subtask: Implement config loading logic.
+- [x] Task: Implement Configuration System [eede5b4]
+    - [x] Subtask: Add `config`, `serde`, `clap` dependencies.
+    - [x] Subtask: Define `AppConfig` struct.
+    - [x] Subtask: Write tests for loading config from defaults, file, env, and args.
+    - [x] Subtask: Implement config loading logic.
 - [ ] Task: Conductor - User Manual Verification 'Core Setup & Configuration' (Protocol in workflow.md)
 
 ## Phase 2: CTranslate2 Model Wrapper
