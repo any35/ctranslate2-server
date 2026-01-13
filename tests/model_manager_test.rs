@@ -1,4 +1,7 @@
-use ctranslate2_server::{config::AppConfig, model::ModelManager};
+use ctranslate2_server::{
+    config::AppConfig,
+    model::{GenerationParams, ModelManager},
+};
 
 #[tokio::test]
 async fn model_manager_load_error_on_invalid_path() {
@@ -14,6 +17,9 @@ async fn model_manager_load_error_on_invalid_path() {
             target_lang: None,
             device: None,
             device_indices: None,
+            beam_size: None,
+            repetition_penalty: None,
+            no_repeat_ngram_size: None,
         },
     );
 
@@ -37,10 +43,15 @@ async fn model_manager_generate_error_if_not_loaded() {
             target_lang: None,
             device: None,
             device_indices: None,
+            beam_size: None,
+            repetition_penalty: None,
+            no_repeat_ngram_size: None,
         },
     );
     let manager = ModelManager::new(config);
-    let result = manager.generate("t5", vec!["Hello".into()], None).await;
+    let result = manager
+        .generate("t5", vec!["Hello".into()], GenerationParams::default())
+        .await;
     assert!(result.is_err());
 }
 

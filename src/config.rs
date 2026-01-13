@@ -42,6 +42,9 @@ pub struct ModelSpec {
     pub target_lang: Option<String>,
     pub device: Option<String>,
     pub device_indices: Option<Vec<i32>>,
+    pub beam_size: Option<usize>,
+    pub repetition_penalty: Option<f32>,
+    pub no_repeat_ngram_size: Option<usize>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -59,6 +62,12 @@ pub struct AppConfig {
     pub device: String,
     #[serde(default = "default_device_indices")]
     pub device_indices: Vec<i32>,
+    #[serde(default = "default_beam_size")]
+    pub beam_size: usize,
+    #[serde(default = "default_repetition_penalty")]
+    pub repetition_penalty: f32,
+    #[serde(default = "default_no_repeat_ngram_size")]
+    pub no_repeat_ngram_size: usize,
 }
 
 fn default_model() -> String {
@@ -77,6 +86,18 @@ fn default_device_indices() -> Vec<i32> {
     vec![0]
 }
 
+fn default_beam_size() -> usize {
+    5
+}
+
+fn default_repetition_penalty() -> f32 {
+    1.2
+}
+
+fn default_no_repeat_ngram_size() -> usize {
+    0
+}
+
 impl Default for AppConfig {
     fn default() -> Self {
         Self {
@@ -87,6 +108,9 @@ impl Default for AppConfig {
             target_lang: default_target_lang(),
             device: default_device(),
             device_indices: default_device_indices(),
+            beam_size: default_beam_size(),
+            repetition_penalty: default_repetition_penalty(),
+            no_repeat_ngram_size: default_no_repeat_ngram_size(),
         }
     }
 }
@@ -105,6 +129,9 @@ impl AppConfig {
             .set_default("default_model", "nllb")?
             .set_default("target_lang", "eng_Latn")?
             .set_default("device", "cpu")?
+            .set_default("beam_size", 5)?
+            .set_default("repetition_penalty", 1.2)?
+            .set_default("no_repeat_ngram_size", 0)?
             // Add config file
             .add_source(File::with_name(config_path).required(false))
             // Add environment variables (e.g. SERVER_PORT)

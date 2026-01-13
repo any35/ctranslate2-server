@@ -3,11 +3,18 @@ use ct2rs::{Config as Ct2Config, Device, TranslationOptions, Translator};
 use snafu::{Location, prelude::*};
 use std::collections::HashMap;
 use std::path::PathBuf;
-use std::str::FromStr;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
 use crate::config::AppConfig;
+
+#[derive(Debug, Clone, Default)]
+pub struct GenerationParams {
+    pub target_lang: Option<String>,
+    pub beam_size: Option<usize>,
+    pub repetition_penalty: Option<f32>,
+    pub no_repeat_ngram_size: Option<usize>,
+}
 
 #[derive(Debug, Snafu)]
 pub enum ModelError {
@@ -107,17 +114,25 @@ impl ModelManager {
             ..Default::default()
         };
 
-        let translator =
-            tokio::task::spawn_blocking(move || Translator::new(model_path_clone, &ct2_config))
-                .await
-                .map_err(|e| anyhow::anyhow!("Join error: {}", e))
-                .context(LoadSnafu {
-                    path: model_path.clone(),
-                })?
-                .map_err(|e| anyhow::anyhow!(e))
-                .context(LoadSnafu {
-                    path: model_path.clone(),
-                })?;
+        let tokenizer_path = spec.tokenizer_path.as_ref().unwrap_or(&spec.path);
+        let tokenizer = ct2rs::tokenizers::auto::Tokenizer::new(tokenizer_path)
+            .map_err(|e| anyhow::anyhow!("Failed to load tokenizer: {}", e))
+            .context(LoadSnafu {
+                path: tokenizer_path,
+            })?;
+
+        let translator = tokio::task::spawn_blocking(move || {
+            Translator::with_tokenizer(model_path_clone, tokenizer, &ct2_config)
+        })
+        .await
+        .map_err(|e| anyhow::anyhow!("Join error: {}", e))
+        .context(LoadSnafu {
+            path: model_path.clone(),
+        })?
+        .map_err(|e| anyhow::anyhow!(e))
+        .context(LoadSnafu {
+            path: model_path.clone(),
+        })?;
 
         let mut translators = self.translators.write().await;
         translators.insert(resolved_name, Arc::new(translator));
@@ -156,19 +171,45 @@ impl ModelManager {
         &self,
         name: &str,
         prompts: Vec<String>,
-        request_target_lang: Option<String>,
+        params: GenerationParams,
     ) -> Result<Vec<String>, ModelError> {
         let resolved_name = self.resolve_model_name(name);
         let translator = self.get_translator(name).await?;
 
-        // Resolve target language: Request > Model Config > Global Config
+        // Resolve config
         let model_spec = self.config.models.get(&resolved_name);
-        let target_lang = request_target_lang
+
+        // 1. Target Lang
+        let target_lang = params
+            .target_lang
             .or_else(|| model_spec.and_then(|m| m.target_lang.clone()))
             .unwrap_or_else(|| self.config.target_lang.clone());
 
+        // 2. Beam Size
+        let beam_size = params
+            .beam_size
+            .or_else(|| model_spec.and_then(|m| m.beam_size))
+            .unwrap_or(self.config.beam_size);
+
+        // 3. Repetition Penalty
+        let repetition_penalty = params
+            .repetition_penalty
+            .or_else(|| model_spec.and_then(|m| m.repetition_penalty))
+            .unwrap_or(self.config.repetition_penalty);
+
+        // 4. No Repeat Ngram Size
+        let no_repeat_ngram_size = params
+            .no_repeat_ngram_size
+            .or_else(|| model_spec.and_then(|m| m.no_repeat_ngram_size))
+            .unwrap_or(self.config.no_repeat_ngram_size);
+
         tokio::task::spawn_blocking(move || {
-            let options = TranslationOptions::default();
+            let options = TranslationOptions {
+                beam_size,
+                repetition_penalty,
+                no_repeat_ngram_size,
+                ..Default::default()
+            };
 
             // Replicate the prefix for each prompt in the batch
             let target_prefixes: Vec<Vec<String>> = std::iter::repeat(vec![target_lang.clone()])

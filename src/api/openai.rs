@@ -1,4 +1,7 @@
-use crate::{model::ModelError, state::AppState};
+use crate::{
+    model::{GenerationParams, ModelError},
+    state::AppState,
+};
 use axum::{
     Json,
     extract::State,
@@ -24,6 +27,12 @@ pub struct ChatCompletionRequest {
     pub max_tokens: Option<u32>,
     /// Extension: Target language code (e.g. "fra_Latn")
     pub target_lang: Option<String>,
+    /// Extension: Beam size for beam search (default: 5)
+    pub beam_size: Option<usize>,
+    /// Extension: Penalty for repeated tokens (default: 1.2)
+    pub repetition_penalty: Option<f32>,
+    /// Extension: Prevent repetitions of ngrams with this size (default: 0)
+    pub no_repeat_ngram_size: Option<usize>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -78,9 +87,16 @@ pub async fn chat_completions(
 
     // Model resolution is now handled by ModelManager (including aliases and defaults)
     // We pass the requested model name directly.
+    let params = GenerationParams {
+        target_lang: request.target_lang.clone(),
+        beam_size: request.beam_size,
+        repetition_penalty: request.repetition_penalty,
+        no_repeat_ngram_size: request.no_repeat_ngram_size,
+    };
+
     let results = state
         .model_manager
-        .generate(&request.model, vec![prompt], request.target_lang)
+        .generate(&request.model, vec![prompt], params)
         .await
         .map_err(|e| match e {
             ModelError::NotFound { .. } | ModelError::ConfigNotFound { .. } => {

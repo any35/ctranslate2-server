@@ -16,6 +16,12 @@ fn main() -> std::io::Result<()> {
 
     config.push_str("device_indices = [0]\n\n");
 
+    config.push_str("beam_size = 5\n");
+
+    config.push_str("repetition_penalty = 1.2\n");
+
+    config.push_str("no_repeat_ngram_size = 0\n\n");
+
     config.push_str("[aliases]\n");
 
     // We will populate this dynamically if we find suitable models
