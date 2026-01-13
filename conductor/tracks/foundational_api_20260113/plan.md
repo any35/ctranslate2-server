@@ -35,11 +35,11 @@ Build the HTTP layer compatible with OpenAI.
     - [x] Subtask: Create `api/openai.rs` module.
     - [x] Subtask: Define structs: `ChatCompletionRequest`, `ChatCompletionMessage`, `ChatCompletionResponse`, `ChatCompletionChoice`.
     - [x] Subtask: Write serialization/deserialization tests to ensure compatibility with official OpenAI examples.
-- [~] Task: Implement /v1/chat/completions Endpoint
-    - [ ] Subtask: Write integration test using `axum::test_helpers` or `reqwest` against the mock server.
-    - [ ] Subtask: Implement the handler function connecting `Axum` -> `ModelManager`.
-    - [ ] Subtask: Handle errors using `snafu` and map to OpenAI error format.
-- [ ] Task: Conductor - User Manual Verification 'OpenAI API Implementation' (Protocol in workflow.md)
+- [x] Task: Implement /v1/chat/completions Endpoint [a73e92b]
+    - [x] Subtask: Write integration test using `axum::test_helpers` or `reqwest` against the mock server.
+    - [x] Subtask: Implement the handler function connecting `Axum` -> `ModelManager`.
+    - [x] Subtask: Handle errors using `snafu` and map to OpenAI error format.
+- [~] Task: Conductor - User Manual Verification 'OpenAI API Implementation' (Protocol in workflow.md)
 
 ## Phase 4: Dockerization & Final Polish
 Prepare for deployment.
