@@ -22,11 +22,11 @@ Implement the safe Rust wrapper for the inference engine.
     - [x] Subtask: Define `ModelManager` and `ModelType` enum (NLLB, T5, Whisper).
     - [x] Subtask: Write integration tests for loading a dummy/small model.
     - [x] Subtask: Implement `ModelManager::new()` and `load_model()`.
-- [~] Task: Implement Inference Logic (Text Generation)
-    - [ ] Subtask: Define trait/method for `predict` or `chat`.
-    - [ ] Subtask: Write tests for generating text from a loaded model.
-    - [ ] Subtask: Implement `generate` method using `ct2rs` APIs, wrapping blocking calls in `spawn_blocking` if necessary.
-- [ ] Task: Conductor - User Manual Verification 'CTranslate2 Model Wrapper' (Protocol in workflow.md)
+- [x] Task: Implement Inference Logic (Text Generation) [7000603]
+    - [x] Subtask: Define trait/method for `predict` or `chat`.
+    - [x] Subtask: Write tests for generating text from a loaded model.
+    - [x] Subtask: Implement `generate` method using `ct2rs` APIs, wrapping blocking calls in `spawn_blocking` if necessary.
+- [~] Task: Conductor - User Manual Verification 'CTranslate2 Model Wrapper' (Protocol in workflow.md)
 
 ## Phase 3: OpenAI API Implementation
 Build the HTTP layer compatible with OpenAI.
