@@ -1,0 +1,6 @@
+target/
+.git/
+conductor/
+*.log
+.gemini/
+.env
