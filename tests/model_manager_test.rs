@@ -12,6 +12,8 @@ async fn model_manager_load_error_on_invalid_path() {
             model_type: "t5".to_string(),
             tokenizer_path: None,
             target_lang: None,
+            device: None,
+            device_indices: None,
         },
     );
 
@@ -33,6 +35,8 @@ async fn model_manager_generate_error_if_not_loaded() {
             model_type: "t5".to_string(),
             tokenizer_path: None,
             target_lang: None,
+            device: None,
+            device_indices: None,
         },
     );
     let manager = ModelManager::new(config);

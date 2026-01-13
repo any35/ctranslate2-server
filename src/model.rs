@@ -1,11 +1,13 @@
-use crate::config::AppConfig;
 use ct2rs::tokenizers::auto::Tokenizer as AutoTokenizer;
-use ct2rs::{Config, TranslationOptions, Translator};
+use ct2rs::{Config as Ct2Config, Device, TranslationOptions, Translator};
 use snafu::{Location, prelude::*};
 use std::collections::HashMap;
 use std::path::PathBuf;
+use std::str::FromStr;
 use std::sync::Arc;
 use tokio::sync::RwLock;
+
+use crate::config::AppConfig;
 
 #[derive(Debug, Snafu)]
 pub enum ModelError {
@@ -49,14 +51,20 @@ impl ModelManager {
         }
     }
 
+    fn parse_device(device: &str) -> Device {
+        match device.to_lowercase().as_str() {
+            "cuda" => Device::CUDA,
+            _ => Device::CPU,
+        }
+    }
+
     pub fn resolve_model_name(&self, name: &str) -> String {
         // 1. Check if it's an alias
         if let Some(real_name) = self.config.aliases.get(name) {
             return real_name.clone();
         }
-        // 2. Check if it's the default request (e.g. empty or "default")?
-        // OpenAI usually requires exact names, but we can be nice.
-        if name == "default" {
+        // 2. Check if it's the default request
+        if name == "default" || name.is_empty() {
             return self.config.default_model.clone();
         }
         // 3. Return as is
@@ -81,29 +89,35 @@ impl ModelManager {
             })?;
 
         let model_path = PathBuf::from(&spec.path);
-        // Tokenizer path is usually same as model path if not specified
-        // ct2rs AutoTokenizer::new takes a path to look for tokenizer files
-        let tokenizer_path = spec
-            .tokenizer_path
+
+        // Resolve device settings
+        let device_str = spec.device.as_ref().unwrap_or(&self.config.device);
+        let device = Self::parse_device(device_str);
+
+        let device_indices = spec
+            .device_indices
             .as_ref()
-            .map(PathBuf::from)
-            .unwrap_or_else(|| model_path.clone());
+            .unwrap_or(&self.config.device_indices);
 
         // CTranslate2 loading is blocking
         let model_path_clone = model_path.clone();
-        let _tokenizer_path_clone = tokenizer_path.clone(); // In case we need it later explicitly
+        let ct2_config = Ct2Config {
+            device,
+            device_indices: device_indices.clone(),
+            ..Default::default()
+        };
 
-        let translator = tokio::task::spawn_blocking(move || {
-            Translator::new(model_path_clone, &Config::default())
-        })
-        .await
-        .map_err(|e| anyhow::anyhow!("Join error: {}", e))
-        .context(LoadSnafu {
-            path: model_path.clone(),
-        })?
-        .context(LoadSnafu {
-            path: model_path.clone(),
-        })?;
+        let translator =
+            tokio::task::spawn_blocking(move || Translator::new(model_path_clone, &ct2_config))
+                .await
+                .map_err(|e| anyhow::anyhow!("Join error: {}", e))
+                .context(LoadSnafu {
+                    path: model_path.clone(),
+                })?
+                .map_err(|e| anyhow::anyhow!(e))
+                .context(LoadSnafu {
+                    path: model_path.clone(),
+                })?;
 
         let mut translators = self.translators.write().await;
         translators.insert(resolved_name, Arc::new(translator));

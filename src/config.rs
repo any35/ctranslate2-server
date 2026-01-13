@@ -40,6 +40,8 @@ pub struct ModelSpec {
     pub model_type: String, // e.g. "t5", "nllb"
     pub tokenizer_path: Option<String>,
     pub target_lang: Option<String>,
+    pub device: Option<String>,
+    pub device_indices: Option<Vec<i32>>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -53,6 +55,10 @@ pub struct AppConfig {
     pub default_model: String,
     #[serde(default = "default_target_lang")]
     pub target_lang: String,
+    #[serde(default = "default_device")]
+    pub device: String,
+    #[serde(default = "default_device_indices")]
+    pub device_indices: Vec<i32>,
 }
 
 fn default_model() -> String {
@@ -63,6 +69,14 @@ fn default_target_lang() -> String {
     "eng_Latn".to_string()
 }
 
+fn default_device() -> String {
+    "cpu".to_string()
+}
+
+fn default_device_indices() -> Vec<i32> {
+    vec![0]
+}
+
 impl Default for AppConfig {
     fn default() -> Self {
         Self {
@@ -71,6 +85,8 @@ impl Default for AppConfig {
             aliases: HashMap::new(),
             default_model: default_model(),
             target_lang: default_target_lang(),
+            device: default_device(),
+            device_indices: default_device_indices(),
         }
     }
 }
@@ -88,6 +104,7 @@ impl AppConfig {
             .set_default("server.port", 8080)?
             .set_default("default_model", "nllb")?
             .set_default("target_lang", "eng_Latn")?
+            .set_default("device", "cpu")?
             // Add config file
             .add_source(File::with_name(config_path).required(false))
             // Add environment variables (e.g. SERVER_PORT)

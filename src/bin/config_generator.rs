@@ -10,7 +10,11 @@ fn main() -> std::io::Result<()> {
 
     config.push_str("default_model = \"nllb\"\n");
 
-    config.push_str("target_lang = \"eng_Latn\"\n\n");
+    config.push_str("target_lang = \"eng_Latn\"\n");
+
+    config.push_str("device = \"cpu\"\n");
+
+    config.push_str("device_indices = [0]\n\n");
 
     config.push_str("[aliases]\n");
 
