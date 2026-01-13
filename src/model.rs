@@ -115,6 +115,20 @@ impl ModelManager {
         name: &str,
     ) -> Result<Arc<Translator<AutoTokenizer>>, ModelError> {
         let resolved_name = self.resolve_model_name(name);
+
+        // 1. Check if already loaded
+        {
+            let translators = self.translators.read().await;
+            if let Some(translator) = translators.get(&resolved_name) {
+                return Ok(translator.clone());
+            }
+        }
+
+        // 2. Try to load if not loaded (Lazy loading)
+        tracing::info!("Lazy loading model: {}", resolved_name);
+        self.load_model(&resolved_name).await?;
+
+        // 3. Get after load
         let translators = self.translators.read().await;
         translators
             .get(&resolved_name)
