@@ -14,7 +14,7 @@ Establish the project skeleton, logging, and configuration management.
     - [x] Subtask: Implement config loading logic.
 - [x] Task: Conductor - User Manual Verification 'Core Setup & Configuration' (Protocol in workflow.md) [66e9446]
 
-## Phase 2: CTranslate2 Model Wrapper
+## Phase 2: CTranslate2 Model Wrapper [checkpoint: 90d767f]
 Implement the safe Rust wrapper for the inference engine.
 
 - [x] Task: Implement ModelManager Struct [2e1fbcf]
@@ -26,12 +26,12 @@ Implement the safe Rust wrapper for the inference engine.
     - [x] Subtask: Define trait/method for `predict` or `chat`.
     - [x] Subtask: Write tests for generating text from a loaded model.
     - [x] Subtask: Implement `generate` method using `ct2rs` APIs, wrapping blocking calls in `spawn_blocking` if necessary.
-- [~] Task: Conductor - User Manual Verification 'CTranslate2 Model Wrapper' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'CTranslate2 Model Wrapper' (Protocol in workflow.md) [90d767f]
 
 ## Phase 3: OpenAI API Implementation
 Build the HTTP layer compatible with OpenAI.
 
-- [ ] Task: Define OpenAI Request/Response Schemas
+- [~] Task: Define OpenAI Request/Response Schemas
     - [ ] Subtask: Create `api/openai.rs` module.
     - [ ] Subtask: Define structs: `ChatCompletionRequest`, `ChatCompletionMessage`, `ChatCompletionResponse`, `ChatCompletionChoice`.
     - [ ] Subtask: Write serialization/deserialization tests to ensure compatibility with official OpenAI examples.
