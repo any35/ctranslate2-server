@@ -1,16 +1,12 @@
-use crate::{
-    model::{ModelError, ModelType},
-    state::AppState,
-};
+use serde::{Deserialize, Serialize};
 use axum::{
-    Json,
     extract::State,
     http::StatusCode,
     response::{IntoResponse, Response},
+    Json,
 };
-use serde::{Deserialize, Serialize};
 use serde_json::json;
-use std::str::FromStr;
+use crate::{model::ModelError, state::AppState};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct ChatCompletionMessage {
@@ -71,9 +67,6 @@ pub async fn chat_completions(
     State(state): State<AppState>,
     Json(request): Json<ChatCompletionRequest>,
 ) -> Result<impl IntoResponse, ApiError> {
-    let model_type = ModelType::from_str(&request.model)
-        .map_err(|_| ApiError::BadRequest(format!("Unknown model: {}", request.model)))?;
-
     // specific logic: take the last user message as prompt
     let prompt = request
         .messages
@@ -81,14 +74,15 @@ pub async fn chat_completions(
         .map(|m| m.content.clone())
         .ok_or_else(|| ApiError::BadRequest("No messages provided".to_string()))?;
 
+    // Model resolution is now handled by ModelManager (including aliases and defaults)
+    // We pass the requested model name directly.
     let results = state
         .model_manager
-        .generate(model_type, vec![prompt])
+        .generate(&request.model, vec![prompt])
         .await
         .map_err(|e| match e {
-            ModelError::NotFound { .. } => {
-                ApiError::BadRequest(format!("Model not loaded: {:?}", model_type))
-            }
+            ModelError::NotFound { .. } | ModelError::ConfigNotFound { .. } => 
+                ApiError::BadRequest(format!("Model error: {}", e)),
             _ => ApiError::InternalServerError(format!("Inference failed: {}", e)),
         })?;
 

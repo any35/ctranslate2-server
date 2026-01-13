@@ -2,14 +2,14 @@ use axum::{
     body::Body,
     http::{Request, StatusCode},
 };
-use ctranslate2_server::{app, model::ModelManager, state::AppState};
-use serde_json::json;
-use std::sync::Arc;
 use tower::ServiceExt;
+use ctranslate2_server::{app, state::AppState, model::ModelManager, config::AppConfig};
+use std::sync::Arc;
+use serde_json::json;
 
 #[tokio::test]
 async fn chat_completions_returns_400_if_model_not_loaded() {
-    let model_manager = Arc::new(ModelManager::new());
+    let model_manager = Arc::new(ModelManager::new(AppConfig::default()));
     let state = AppState { model_manager };
     let app = app(state);
 
@@ -33,10 +33,10 @@ async fn chat_completions_returns_400_if_model_not_loaded() {
         .unwrap();
 
     assert_eq!(response.status(), StatusCode::BAD_REQUEST);
-
-    let body_bytes = axum::body::to_bytes(response.into_body(), usize::MAX)
-        .await
-        .unwrap();
+    
+    let body_bytes = axum::body::to_bytes(response.into_body(), usize::MAX).await.unwrap();
     let body: serde_json::Value = serde_json::from_slice(&body_bytes).unwrap();
-    assert!(body["error"].as_str().unwrap().contains("Model not loaded"));
+    // Expect "Model configuration not found" or similar
+    let error_msg = body["error"].as_str().unwrap();
+    assert!(error_msg.contains("Model configuration not found") || error_msg.contains("Model not found"));
 }

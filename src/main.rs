@@ -23,7 +23,7 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let model_manager = Arc::new(ModelManager::new());
+    let model_manager = Arc::new(ModelManager::new(config.clone()));
     let state = AppState { model_manager };
 
     let addr: SocketAddr = format!("{}:{}", config.server.host, config.server.port)

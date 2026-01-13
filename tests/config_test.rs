@@ -22,6 +22,7 @@ fn cli_args_override_everything() {
     let args = Args {
         host: None,
         port: Some(7070),
+        config: "config.toml".into(),
     };
     unsafe { std::env::set_var("SERVER_PORT", "9090") };
     let config = AppConfig::load(Some(args)).unwrap();
