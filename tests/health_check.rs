@@ -2,8 +2,8 @@ use axum::{
     body::Body,
     http::{Request, StatusCode},
 };
-use tower::ServiceExt; // for `oneshot`
-use ctranslate2_server::app; // I'll need to make this available
+use ctranslate2_server::app;
+use tower::ServiceExt; // for `oneshot` // I'll need to make this available
 
 #[tokio::test]
 async fn health_check_works() {

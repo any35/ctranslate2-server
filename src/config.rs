@@ -1,6 +1,6 @@
-use serde::Deserialize;
-use config::{Config, ConfigError, Environment, File};
 use clap::Parser;
+use config::{Config, ConfigError, Environment, File};
+use serde::Deserialize;
 
 #[derive(Parser, Debug, Clone)]
 #[command(author, version, about, long_about = None)]

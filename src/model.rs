@@ -1,19 +1,32 @@
+use ct2rs::tokenizers::auto::Tokenizer as AutoTokenizer;
+use ct2rs::{Config, TranslationOptions, Translator};
+use snafu::{Location, prelude::*};
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use snafu::prelude::*;
-use ct2rs::{Translator, Config, TranslationOptions};
-use ct2rs::tokenizers::auto::Tokenizer as AutoTokenizer;
 
 #[derive(Debug, Snafu)]
 pub enum ModelError {
-    #[snafu(display("Failed to load model from {}: {}", path.display(), source))]
-    LoadError { path: PathBuf, source: anyhow::Error },
-    #[snafu(display("Model not found: {:?}", model_type))]
-    NotFound { model_type: ModelType },
-    #[snafu(display("Inference failed: {}", source))]
-    InferenceError { source: anyhow::Error },
+    #[snafu(display("Failed to load model from {} at {}: {}", path.display(), location, source))]
+    LoadError {
+        path: PathBuf,
+        source: anyhow::Error,
+        #[snafu(implicit)]
+        location: Location,
+    },
+    #[snafu(display("Model not found: {:?} at {}", model_type, location))]
+    NotFound {
+        model_type: ModelType,
+        #[snafu(implicit)]
+        location: Location,
+    },
+    #[snafu(display("Inference failed at {}: {}", location, source))]
+    InferenceError {
+        source: anyhow::Error,
+        #[snafu(implicit)]
+        location: Location,
+    },
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -37,39 +50,45 @@ impl ModelManager {
     pub async fn load_model(&self, model_type: ModelType, path: PathBuf) -> Result<(), ModelError> {
         // CTranslate2 loading is blocking, so we use spawn_blocking
         let path_clone = path.clone();
-        let translator = tokio::task::spawn_blocking(move || {
-            Translator::new(path_clone, &Config::default())
-        })
-        .await
-        .map_err(|e| ModelError::LoadError { 
-            path: path.clone(), 
-            source: anyhow::anyhow!("Join error: {}", e) 
-        })?
-        .map_err(|e| ModelError::LoadError { 
-            path: path.clone(), 
-            source: anyhow::anyhow!(e) 
-        })?;
+        let translator =
+            tokio::task::spawn_blocking(move || Translator::new(path_clone, &Config::default()))
+                .await
+                .map_err(|e| anyhow::anyhow!("Join error: {}", e))
+                .context(LoadSnafu { path: path.clone() })?
+                .context(LoadSnafu { path: path.clone() })?;
 
         let mut translators = self.translators.write().await;
         translators.insert(model_type, Arc::new(translator));
         Ok(())
     }
 
-    pub async fn get_translator(&self, model_type: ModelType) -> Result<Arc<Translator<AutoTokenizer>>, ModelError> {
+    pub async fn get_translator(
+        &self,
+        model_type: ModelType,
+    ) -> Result<Arc<Translator<AutoTokenizer>>, ModelError> {
         let translators = self.translators.read().await;
-        translators.get(&model_type).cloned().context(NotFoundSnafu { model_type })
+        translators
+            .get(&model_type)
+            .cloned()
+            .context(NotFoundSnafu { model_type })
     }
 
-    pub async fn generate(&self, model_type: ModelType, prompts: Vec<String>) -> Result<Vec<String>, ModelError> {
+    pub async fn generate(
+        &self,
+        model_type: ModelType,
+        prompts: Vec<String>,
+    ) -> Result<Vec<String>, ModelError> {
         let translator = self.get_translator(model_type).await?;
 
         tokio::task::spawn_blocking(move || {
-            translator.translate_batch(&prompts, &TranslationOptions::default(), None)
+            translator
+                .translate_batch(&prompts, &TranslationOptions::default(), None)
                 .map(|results| results.into_iter().map(|(s, _)| s).collect())
         })
         .await
-        .map_err(|e| ModelError::InferenceError { source: anyhow::anyhow!("Join error: {}", e) })?
-        .map_err(|e| ModelError::InferenceError { source: e })
+        .map_err(|e| anyhow::anyhow!("Join error: {}", e))
+        .context(InferenceSnafu)?
+        .context(InferenceSnafu)
     }
 }
 

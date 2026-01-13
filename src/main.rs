@@ -1,7 +1,10 @@
-use ctranslate2_server::{app, config::{AppConfig, Args}};
+use clap::Parser;
+use ctranslate2_server::{
+    app,
+    config::{AppConfig, Args},
+};
 use std::net::SocketAddr;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-use clap::Parser;
 
 #[tokio::main]
 async fn main() {
@@ -20,7 +23,7 @@ async fn main() {
     let addr: SocketAddr = format!("{}:{}", config.server.host, config.server.port)
         .parse()
         .expect("Invalid address");
-    
+
     tracing::info!("listening on {}", addr);
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
