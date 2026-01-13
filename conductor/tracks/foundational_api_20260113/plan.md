@@ -1,6 +1,6 @@
 # Track Plan: Foundational API and Model Infrastructure
 
-## Phase 1: Core Setup & Configuration
+## Phase 1: Core Setup & Configuration [checkpoint: 66e9446]
 Establish the project skeleton, logging, and configuration management.
 
 - [x] Task: Initialize Axum Server & Tracing [56c5a61]
@@ -12,7 +12,7 @@ Establish the project skeleton, logging, and configuration management.
     - [x] Subtask: Define `AppConfig` struct.
     - [x] Subtask: Write tests for loading config from defaults, file, env, and args.
     - [x] Subtask: Implement config loading logic.
-- [ ] Task: Conductor - User Manual Verification 'Core Setup & Configuration' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Core Setup & Configuration' (Protocol in workflow.md) [66e9446]
 
 ## Phase 2: CTranslate2 Model Wrapper
 Implement the safe Rust wrapper for the inference engine.
