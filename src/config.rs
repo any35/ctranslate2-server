@@ -37,6 +37,7 @@ impl Default for ServerConfig {
 #[derive(Debug, Deserialize, Clone)]
 pub struct ModelSpec {
     pub path: String,
+    pub model_type: String, // e.g. "t5", "nllb"
     pub tokenizer_path: Option<String>,
 }
 

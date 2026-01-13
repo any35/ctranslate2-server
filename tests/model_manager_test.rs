@@ -9,6 +9,7 @@ async fn model_manager_load_error_on_invalid_path() {
         "t5".to_string(),
         ctranslate2_server::config::ModelSpec {
             path: "/non/existent/path".to_string(),
+            model_type: "t5".to_string(),
             tokenizer_path: None,
         },
     );
@@ -28,6 +29,7 @@ async fn model_manager_generate_error_if_not_loaded() {
         "t5".to_string(),
         ctranslate2_server::config::ModelSpec {
             path: "/tmp".to_string(),
+            model_type: "t5".to_string(),
             tokenizer_path: None,
         },
     );
