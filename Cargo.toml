@@ -1,0 +1,7 @@
+[package]
+name = "ctranslate2-server"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ct2rs = { version = "0.9.16", features = ["cuda", "dnnl", "mkl", "whisper"] }

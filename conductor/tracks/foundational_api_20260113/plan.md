@@ -1,0 +1,51 @@
+# Track Plan: Foundational API and Model Infrastructure
+
+## Phase 1: Core Setup & Configuration
+Establish the project skeleton, logging, and configuration management.
+
+- [ ] Task: Initialize Axum Server & Tracing
+    - [ ] Subtask: Add dependencies (`axum`, `tokio`, `tracing`, `tracing-subscriber`).
+    - [ ] Subtask: Write tests for a basic `/health` endpoint.
+    - [ ] Subtask: Implement `main.rs` to setup `tracing` and start `axum` server.
+- [ ] Task: Implement Configuration System
+    - [ ] Subtask: Add `config`, `serde`, `clap` dependencies.
+    - [ ] Subtask: Define `AppConfig` struct.
+    - [ ] Subtask: Write tests for loading config from defaults, file, env, and args.
+    - [ ] Subtask: Implement config loading logic.
+- [ ] Task: Conductor - User Manual Verification 'Core Setup & Configuration' (Protocol in workflow.md)
+
+## Phase 2: CTranslate2 Model Wrapper
+Implement the safe Rust wrapper for the inference engine.
+
+- [ ] Task: Implement ModelManager Struct
+    - [ ] Subtask: Add `ct2rs` dependency.
+    - [ ] Subtask: Define `ModelManager` and `ModelType` enum (NLLB, T5, Whisper).
+    - [ ] Subtask: Write integration tests for loading a dummy/small model.
+    - [ ] Subtask: Implement `ModelManager::new()` and `load_model()`.
+- [ ] Task: Implement Inference Logic (Text Generation)
+    - [ ] Subtask: Define trait/method for `predict` or `chat`.
+    - [ ] Subtask: Write tests for generating text from a loaded model.
+    - [ ] Subtask: Implement `generate` method using `ct2rs` APIs, wrapping blocking calls in `spawn_blocking` if necessary.
+- [ ] Task: Conductor - User Manual Verification 'CTranslate2 Model Wrapper' (Protocol in workflow.md)
+
+## Phase 3: OpenAI API Implementation
+Build the HTTP layer compatible with OpenAI.
+
+- [ ] Task: Define OpenAI Request/Response Schemas
+    - [ ] Subtask: Create `api/openai.rs` module.
+    - [ ] Subtask: Define structs: `ChatCompletionRequest`, `ChatCompletionMessage`, `ChatCompletionResponse`, `ChatCompletionChoice`.
+    - [ ] Subtask: Write serialization/deserialization tests to ensure compatibility with official OpenAI examples.
+- [ ] Task: Implement /v1/chat/completions Endpoint
+    - [ ] Subtask: Write integration test using `axum::test_helpers` or `reqwest` against the mock server.
+    - [ ] Subtask: Implement the handler function connecting `Axum` -> `ModelManager`.
+    - [ ] Subtask: Handle errors using `snafu` and map to OpenAI error format.
+- [ ] Task: Conductor - User Manual Verification 'OpenAI API Implementation' (Protocol in workflow.md)
+
+## Phase 4: Dockerization & Final Polish
+Prepare for deployment.
+
+- [ ] Task: Create Dockerfile
+    - [ ] Subtask: Create `.dockerignore`.
+    - [ ] Subtask: Write multi-stage `Dockerfile` with targets for `cpu` and `gpu`.
+    - [ ] Subtask: Verify build size and layer caching.
+- [ ] Task: Conductor - User Manual Verification 'Dockerization & Final Polish' (Protocol in workflow.md)
