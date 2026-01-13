@@ -31,11 +31,11 @@ Implement the safe Rust wrapper for the inference engine.
 ## Phase 3: OpenAI API Implementation
 Build the HTTP layer compatible with OpenAI.
 
-- [~] Task: Define OpenAI Request/Response Schemas
-    - [ ] Subtask: Create `api/openai.rs` module.
-    - [ ] Subtask: Define structs: `ChatCompletionRequest`, `ChatCompletionMessage`, `ChatCompletionResponse`, `ChatCompletionChoice`.
-    - [ ] Subtask: Write serialization/deserialization tests to ensure compatibility with official OpenAI examples.
-- [ ] Task: Implement /v1/chat/completions Endpoint
+- [x] Task: Define OpenAI Request/Response Schemas [479c7cf]
+    - [x] Subtask: Create `api/openai.rs` module.
+    - [x] Subtask: Define structs: `ChatCompletionRequest`, `ChatCompletionMessage`, `ChatCompletionResponse`, `ChatCompletionChoice`.
+    - [x] Subtask: Write serialization/deserialization tests to ensure compatibility with official OpenAI examples.
+- [~] Task: Implement /v1/chat/completions Endpoint
     - [ ] Subtask: Write integration test using `axum::test_helpers` or `reqwest` against the mock server.
     - [ ] Subtask: Implement the handler function connecting `Axum` -> `ModelManager`.
     - [ ] Subtask: Handle errors using `snafu` and map to OpenAI error format.
