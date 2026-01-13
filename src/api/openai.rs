@@ -1,4 +1,16 @@
+use crate::{
+    model::{ModelError, ModelType},
+    state::AppState,
+};
+use axum::{
+    Json,
+    extract::State,
+    http::StatusCode,
+    response::{IntoResponse, Response},
+};
 use serde::{Deserialize, Serialize};
+use serde_json::json;
+use std::str::FromStr;
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct ChatCompletionMessage {
@@ -38,4 +50,68 @@ pub struct ChatCompletionResponse {
     pub model: String,
     pub choices: Vec<ChatCompletionChoice>,
     pub usage: Option<Usage>,
+}
+
+pub enum ApiError {
+    BadRequest(String),
+    InternalServerError(String),
+}
+
+impl IntoResponse for ApiError {
+    fn into_response(self) -> Response {
+        let (status, message) = match self {
+            ApiError::BadRequest(msg) => (StatusCode::BAD_REQUEST, msg),
+            ApiError::InternalServerError(msg) => (StatusCode::INTERNAL_SERVER_ERROR, msg),
+        };
+        (status, Json(json!({ "error": message }))).into_response()
+    }
+}
+
+pub async fn chat_completions(
+    State(state): State<AppState>,
+    Json(request): Json<ChatCompletionRequest>,
+) -> Result<impl IntoResponse, ApiError> {
+    let model_type = ModelType::from_str(&request.model)
+        .map_err(|_| ApiError::BadRequest(format!("Unknown model: {}", request.model)))?;
+
+    // specific logic: take the last user message as prompt
+    let prompt = request
+        .messages
+        .last()
+        .map(|m| m.content.clone())
+        .ok_or_else(|| ApiError::BadRequest("No messages provided".to_string()))?;
+
+    let results = state
+        .model_manager
+        .generate(model_type, vec![prompt])
+        .await
+        .map_err(|e| match e {
+            ModelError::NotFound { .. } => {
+                ApiError::BadRequest(format!("Model not loaded: {:?}", model_type))
+            }
+            _ => ApiError::InternalServerError(format!("Inference failed: {}", e)),
+        })?;
+
+    let response_text = results.first().cloned().unwrap_or_default();
+
+    let response = ChatCompletionResponse {
+        id: "chatcmpl-123".to_string(), // TODO: UUID
+        object: "chat.completion".to_string(),
+        created: std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs(),
+        model: request.model.clone(),
+        choices: vec![ChatCompletionChoice {
+            index: 0,
+            message: ChatCompletionMessage {
+                role: "assistant".to_string(),
+                content: response_text,
+            },
+            finish_reason: Some("stop".to_string()),
+        }],
+        usage: None,
+    };
+
+    Ok(Json(response))
 }

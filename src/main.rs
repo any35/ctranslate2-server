@@ -2,8 +2,11 @@ use clap::Parser;
 use ctranslate2_server::{
     app,
     config::{AppConfig, Args},
+    model::ModelManager,
+    state::AppState,
 };
 use std::net::SocketAddr;
+use std::sync::Arc;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[tokio::main]
@@ -20,6 +23,9 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
+    let model_manager = Arc::new(ModelManager::new());
+    let state = AppState { model_manager };
+
     let addr: SocketAddr = format!("{}:{}", config.server.host, config.server.port)
         .parse()
         .expect("Invalid address");
@@ -27,5 +33,5 @@ async fn main() {
     tracing::info!("listening on {}", addr);
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
-    axum::serve(listener, app()).await.unwrap();
+    axum::serve(listener, app(state)).await.unwrap();
 }

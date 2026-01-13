@@ -29,11 +29,26 @@ pub enum ModelError {
     },
 }
 
+use std::str::FromStr;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ModelType {
     NLLB,
     T5,
     Whisper,
+}
+
+impl FromStr for ModelType {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "nllb" => Ok(ModelType::NLLB),
+            "t5" => Ok(ModelType::T5),
+            "whisper" => Ok(ModelType::Whisper),
+            _ => Err(()),
+        }
+    }
 }
 
 pub struct ModelManager {

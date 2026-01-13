@@ -2,12 +2,15 @@ use axum::{
     body::Body,
     http::{Request, StatusCode},
 };
-use ctranslate2_server::app;
-use tower::ServiceExt; // for `oneshot` // I'll need to make this available
+use ctranslate2_server::{app, model::ModelManager, state::AppState};
+use std::sync::Arc;
+use tower::ServiceExt; // for `oneshot`
 
 #[tokio::test]
 async fn health_check_works() {
-    let app = app();
+    let model_manager = Arc::new(ModelManager::new());
+    let state = AppState { model_manager };
+    let app = app(state);
 
     let response = app
         .oneshot(
