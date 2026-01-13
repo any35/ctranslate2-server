@@ -2,10 +2,10 @@ use axum::{
     body::Body,
     http::{Request, StatusCode},
 };
-use tower::ServiceExt;
-use ctranslate2_server::{app, state::AppState, model::ModelManager, config::AppConfig};
-use std::sync::Arc;
+use ctranslate2_server::{app, config::AppConfig, model::ModelManager, state::AppState};
 use serde_json::json;
+use std::sync::Arc;
+use tower::ServiceExt;
 
 #[tokio::test]
 async fn chat_completions_returns_400_if_model_not_loaded() {
@@ -33,10 +33,15 @@ async fn chat_completions_returns_400_if_model_not_loaded() {
         .unwrap();
 
     assert_eq!(response.status(), StatusCode::BAD_REQUEST);
-    
-    let body_bytes = axum::body::to_bytes(response.into_body(), usize::MAX).await.unwrap();
+
+    let body_bytes = axum::body::to_bytes(response.into_body(), usize::MAX)
+        .await
+        .unwrap();
     let body: serde_json::Value = serde_json::from_slice(&body_bytes).unwrap();
     // Expect "Model configuration not found" or similar
     let error_msg = body["error"].as_str().unwrap();
-    assert!(error_msg.contains("Model configuration not found") || error_msg.contains("Model not found"));
+    assert!(
+        error_msg.contains("Model configuration not found")
+            || error_msg.contains("Model not found")
+    );
 }

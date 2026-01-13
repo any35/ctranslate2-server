@@ -1,12 +1,12 @@
-use serde::{Deserialize, Serialize};
+use crate::{model::ModelError, state::AppState};
 use axum::{
+    Json,
     extract::State,
     http::StatusCode,
     response::{IntoResponse, Response},
-    Json,
 };
+use serde::{Deserialize, Serialize};
 use serde_json::json;
-use crate::{model::ModelError, state::AppState};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct ChatCompletionMessage {
@@ -81,8 +81,9 @@ pub async fn chat_completions(
         .generate(&request.model, vec![prompt])
         .await
         .map_err(|e| match e {
-            ModelError::NotFound { .. } | ModelError::ConfigNotFound { .. } => 
-                ApiError::BadRequest(format!("Model error: {}", e)),
+            ModelError::NotFound { .. } | ModelError::ConfigNotFound { .. } => {
+                ApiError::BadRequest(format!("Model error: {}", e))
+            }
             _ => ApiError::InternalServerError(format!("Inference failed: {}", e)),
         })?;
 

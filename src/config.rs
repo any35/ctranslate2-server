@@ -1,6 +1,6 @@
-use serde::Deserialize;
-use config::{Config, ConfigError, Environment, File};
 use clap::Parser;
+use config::{Config, ConfigError, Environment, File};
+use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(Parser, Debug, Clone)]
@@ -68,7 +68,10 @@ impl Default for AppConfig {
 
 impl AppConfig {
     pub fn load(args: Option<Args>) -> Result<Self, ConfigError> {
-        let config_path = args.as_ref().map(|a| a.config.as_str()).unwrap_or("config.toml");
+        let config_path = args
+            .as_ref()
+            .map(|a| a.config.as_str())
+            .unwrap_or("config.toml");
 
         let mut builder = Config::builder()
             // Start with defaults

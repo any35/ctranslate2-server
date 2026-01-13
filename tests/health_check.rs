@@ -2,9 +2,9 @@ use axum::{
     body::Body,
     http::{Request, StatusCode},
 };
-use tower::ServiceExt; // for `oneshot`
-use ctranslate2_server::{app, state::AppState, model::ModelManager, config::AppConfig};
+use ctranslate2_server::{app, config::AppConfig, model::ModelManager, state::AppState};
 use std::sync::Arc;
+use tower::ServiceExt; // for `oneshot`
 
 #[tokio::test]
 async fn health_check_works() {

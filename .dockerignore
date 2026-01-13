@@ -4,3 +4,4 @@ conductor/
 *.log
 .gemini/
 .env
+models/
