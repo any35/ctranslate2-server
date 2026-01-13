@@ -44,8 +44,8 @@ Build the HTTP layer compatible with OpenAI.
 ## Phase 4: Dockerization & Final Polish
 Prepare for deployment.
 
-- [~] Task: Create Dockerfile
-    - [ ] Subtask: Create `.dockerignore`.
-    - [ ] Subtask: Write multi-stage `Dockerfile` with targets for `cpu` and `gpu`.
-    - [ ] Subtask: Verify build size and layer caching.
-- [ ] Task: Conductor - User Manual Verification 'Dockerization & Final Polish' (Protocol in workflow.md)
+- [x] Task: Create Dockerfile [9ecc333]
+    - [x] Subtask: Create `.dockerignore`.
+    - [x] Subtask: Write multi-stage `Dockerfile` with targets for `cpu` and `gpu`.
+    - [x] Subtask: Verify build size and layer caching.
+- [~] Task: Conductor - User Manual Verification 'Dockerization & Final Polish' (Protocol in workflow.md)
