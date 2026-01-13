@@ -48,4 +48,4 @@ Prepare for deployment.
     - [x] Subtask: Create `.dockerignore`.
     - [x] Subtask: Write multi-stage `Dockerfile` with targets for `cpu` and `gpu`.
     - [x] Subtask: Verify build size and layer caching.
-- [~] Task: Conductor - User Manual Verification 'Dockerization & Final Polish' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Dockerization & Final Polish' (Protocol in workflow.md) [51968a4]
