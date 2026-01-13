@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copy locally built binary
-COPY target/release/ctranslate2-server /app/server
+# Copy locally built binary (copied to root by build script)
+COPY ctranslate2-server /app/server
 
 # Default configuration
 ENV RUST_LOG=info
@@ -27,8 +27,8 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copy locally built binary
-COPY target/release/ctranslate2-server /app/server
+# Copy locally built binary (copied to root by build script)
+COPY ctranslate2-server /app/server
 
 ENV RUST_LOG=info
 EXPOSE 8080

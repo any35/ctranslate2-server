@@ -9,6 +9,9 @@ echo "Building Docker image: $IMAGE_NAME"
 echo "Compiling binary (release)..."
 cargo build --release
 
+# Copy binary to root context to respect .dockerignore
+cp target/release/ctranslate2-server ./ctranslate2-server
+
 # Build CPU version
 echo "Building Docker image (CPU)..."
 docker build --target runtime-cpu -t "${IMAGE_NAME}:latest" -t "${IMAGE_NAME}:cpu" .
@@ -16,5 +19,8 @@ docker build --target runtime-cpu -t "${IMAGE_NAME}:latest" -t "${IMAGE_NAME}:cp
 # Optional: Build GPU version
 # echo "Building Docker image (GPU)..."
 # docker build --target runtime-gpu -t "${IMAGE_NAME}:gpu" .
+
+# Cleanup
+rm ./ctranslate2-server
 
 echo "Build complete!"
