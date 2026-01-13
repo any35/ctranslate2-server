@@ -39,6 +39,7 @@ pub struct ModelSpec {
     pub path: String,
     pub model_type: String, // e.g. "t5", "nllb"
     pub tokenizer_path: Option<String>,
+    pub target_lang: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -50,10 +51,16 @@ pub struct AppConfig {
     pub aliases: HashMap<String, String>,
     #[serde(default = "default_model")]
     pub default_model: String,
+    #[serde(default = "default_target_lang")]
+    pub target_lang: String,
 }
 
 fn default_model() -> String {
     "nllb".to_string()
+}
+
+fn default_target_lang() -> String {
+    "eng_Latn".to_string()
 }
 
 impl Default for AppConfig {
@@ -63,6 +70,7 @@ impl Default for AppConfig {
             models: HashMap::new(),
             aliases: HashMap::new(),
             default_model: default_model(),
+            target_lang: default_target_lang(),
         }
     }
 }
@@ -79,6 +87,7 @@ impl AppConfig {
             .set_default("server.host", "0.0.0.0")?
             .set_default("server.port", 8080)?
             .set_default("default_model", "nllb")?
+            .set_default("target_lang", "eng_Latn")?
             // Add config file
             .add_source(File::with_name(config_path).required(false))
             // Add environment variables (e.g. SERVER_PORT)

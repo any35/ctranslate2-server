@@ -142,12 +142,27 @@ impl ModelManager {
         &self,
         name: &str,
         prompts: Vec<String>,
+        request_target_lang: Option<String>,
     ) -> Result<Vec<String>, ModelError> {
+        let resolved_name = self.resolve_model_name(name);
         let translator = self.get_translator(name).await?;
 
+        // Resolve target language: Request > Model Config > Global Config
+        let model_spec = self.config.models.get(&resolved_name);
+        let target_lang = request_target_lang
+            .or_else(|| model_spec.and_then(|m| m.target_lang.clone()))
+            .unwrap_or_else(|| self.config.target_lang.clone());
+
         tokio::task::spawn_blocking(move || {
+            let options = TranslationOptions::default();
+
+            // Replicate the prefix for each prompt in the batch
+            let target_prefixes: Vec<Vec<String>> = std::iter::repeat(vec![target_lang.clone()])
+                .take(prompts.len())
+                .collect();
+
             translator
-                .translate_batch(&prompts, &TranslationOptions::default(), None)
+                .translate_batch_with_target_prefix(&prompts, &target_prefixes, &options, None)
                 .map(|results| results.into_iter().map(|(s, _)| s).collect())
         })
         .await

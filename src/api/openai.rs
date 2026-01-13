@@ -22,6 +22,8 @@ pub struct ChatCompletionRequest {
     pub temperature: Option<f32>,
     #[serde(default)]
     pub max_tokens: Option<u32>,
+    /// Extension: Target language code (e.g. "fra_Latn")
+    pub target_lang: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -78,7 +80,7 @@ pub async fn chat_completions(
     // We pass the requested model name directly.
     let results = state
         .model_manager
-        .generate(&request.model, vec![prompt])
+        .generate(&request.model, vec![prompt], request.target_lang)
         .await
         .map_err(|e| match e {
             ModelError::NotFound { .. } | ModelError::ConfigNotFound { .. } => {

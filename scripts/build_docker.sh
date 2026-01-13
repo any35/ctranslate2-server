@@ -9,6 +9,6 @@ echo "Building Docker image: $IMAGE_NAME"
 docker build --target runtime-cpu -t "${IMAGE_NAME}:latest" -t "${IMAGE_NAME}:cpu" .
 
 # Optional: Build GPU version
-# docker build --target runtime-gpu -t "${IMAGE_NAME}:gpu" .
+docker build --target runtime-gpu -t "${IMAGE_NAME}:gpu" .
 
 echo "Build complete!"

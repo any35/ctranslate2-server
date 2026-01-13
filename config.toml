@@ -1,0 +1,27 @@
+# Auto-generated configuration
+
+[server]
+host = "0.0.0.0"
+port = 8080
+
+default_model = "nllb"
+
+[aliases]
+"nllb" = "nllb-200-3.3B"
+
+[models]
+[models."nllb-200-distilled-1.3B"]
+path = "./models/nllb-200-distilled-1.3B"
+model_type = "nllb"
+
+[models."t5-small"]
+path = "./models/t5-small"
+model_type = "t5"
+
+[models."nllb-200-distilled-600M"]
+path = "./models/nllb-200-distilled-600M"
+model_type = "nllb"
+
+[models."nllb-200-3.3B"]
+path = "./models/nllb-200-3.3B"
+model_type = "nllb"

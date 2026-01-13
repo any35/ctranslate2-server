@@ -11,6 +11,7 @@ async fn model_manager_load_error_on_invalid_path() {
             path: "/non/existent/path".to_string(),
             model_type: "t5".to_string(),
             tokenizer_path: None,
+            target_lang: None,
         },
     );
 
@@ -31,10 +32,11 @@ async fn model_manager_generate_error_if_not_loaded() {
             path: "/tmp".to_string(),
             model_type: "t5".to_string(),
             tokenizer_path: None,
+            target_lang: None,
         },
     );
     let manager = ModelManager::new(config);
-    let result = manager.generate("t5", vec!["Hello".into()]).await;
+    let result = manager.generate("t5", vec!["Hello".into()], None).await;
     assert!(result.is_err());
 }
 
