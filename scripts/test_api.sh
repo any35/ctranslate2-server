@@ -3,7 +3,7 @@
 # Configuration
 URL="http://localhost:8080/v1/chat/completions"
 MODEL=${1:-"nllb"}
-CONTENT=${2:-"Hello, how are you today?"}
+CONTENT=${2:-"你今天怎么样？"}
 
 echo "Testing model: $MODEL"
 echo "Content: $CONTENT"
