@@ -6,7 +6,7 @@ PUSH=false
 
 while getopts "p" opt; do
   case $opt in
-    p:
+    p)
       PUSH=true
       ;;
     \?)
@@ -29,9 +29,9 @@ cp target/release/ctranslate2-server ./ctranslate2-server
 echo "Building Docker image (CPU)..."
 docker build --target runtime-cpu -t "${IMAGE_NAME}:latest" -t "${IMAGE_NAME}:cpu" .
 
-# Optional: Build GPU version
+# Build GPU version
 # echo "Building Docker image (GPU)..."
-# docker build --target runtime-gpu -t "${IMAGE_NAME}:gpu" .
+docker build --target runtime-gpu -t "${IMAGE_NAME}:gpu" .
 
 # Cleanup
 rm ./ctranslate2-server

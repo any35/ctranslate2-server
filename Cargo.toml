@@ -2,6 +2,20 @@
 name = "ctranslate2-server"
 version = "0.1.0"
 edition = "2024"
+description = "A high-performance inference server for CTranslate2 models, compatible with OpenAI's API."
+license = "MIT"
+repository = "https://github.com/yourusername/ctranslate2-server"
+readme = "README.md"
+keywords = ["ctranslate2", "inference", "server", "openai", "nlp"]
+categories = ["web-programming::http-server", "science::robotics-and-ai"]
+exclude = [
+  "models/",
+  "conductor/",
+  ".gemini/",
+  "scripts/",
+  "docker-compose.yml",
+  "Dockerfile",
+]
 
 [dependencies]
 anyhow = "1.0.100"
@@ -16,3 +30,8 @@ tokio = { version = "1.49.0", features = ["full"] }
 tower = { version = "0.5.3", features = ["util"] }
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

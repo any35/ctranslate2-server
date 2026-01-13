@@ -29,5 +29,4 @@ model_type = "nllb"
 [models."nllb-200-3.3B"]
 tokenizer_path = "./models/nllb-200-3.3B"
 path = "./models/nllb-200-3.3B/quant_32"
-# path = "./models/nllb-200-3.3B"
 model_type = "nllb"
