@@ -5,6 +5,7 @@ host = "0.0.0.0"
 port = 8080
 
 default_model = "nllb"
+target_lang = "eng_Latn"
 device = "cpu"
 device_indices = [0]
 
@@ -13,7 +14,8 @@ device_indices = [0]
 
 [models]
 [models."nllb-200-distilled-1.3B"]
-path = "./models/nllb-200-distilled-1.3B"
+path = "./models/nllb-200-distilled-1.3B/quant_8"
+tokenizer_path = "./models/nllb-200-distilled-1.3B"
 model_type = "nllb"
 
 [models."t5-small"]
@@ -25,5 +27,7 @@ path = "./models/nllb-200-distilled-600M"
 model_type = "nllb"
 
 [models."nllb-200-3.3B"]
-path = "./models/nllb-200-3.3B"
+tokenizer_path = "./models/nllb-200-3.3B"
+path = "./models/nllb-200-3.3B/quant_32"
+# path = "./models/nllb-200-3.3B"
 model_type = "nllb"

@@ -33,6 +33,7 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 COPY --from=builder /app/target/release/ctranslate2-server /app/server
+COPY --from=builder config.toml /app/config.toml
 
 # Default configuration
 ENV RUST_LOG=info
@@ -51,6 +52,7 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 COPY --from=builder /app/target/release/ctranslate2-server /app/server
+COPY --from=builder config.toml /app/config.toml
 
 ENV RUST_LOG=info
 EXPOSE 8080
