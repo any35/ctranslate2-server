@@ -28,7 +28,7 @@ Implement the safe Rust wrapper for the inference engine.
     - [x] Subtask: Implement `generate` method using `ct2rs` APIs, wrapping blocking calls in `spawn_blocking` if necessary.
 - [x] Task: Conductor - User Manual Verification 'CTranslate2 Model Wrapper' (Protocol in workflow.md) [90d767f]
 
-## Phase 3: OpenAI API Implementation
+## Phase 3: OpenAI API Implementation [checkpoint: 5c84454]
 Build the HTTP layer compatible with OpenAI.
 
 - [x] Task: Define OpenAI Request/Response Schemas [479c7cf]
@@ -39,12 +39,12 @@ Build the HTTP layer compatible with OpenAI.
     - [x] Subtask: Write integration test using `axum::test_helpers` or `reqwest` against the mock server.
     - [x] Subtask: Implement the handler function connecting `Axum` -> `ModelManager`.
     - [x] Subtask: Handle errors using `snafu` and map to OpenAI error format.
-- [~] Task: Conductor - User Manual Verification 'OpenAI API Implementation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'OpenAI API Implementation' (Protocol in workflow.md) [5c84454]
 
 ## Phase 4: Dockerization & Final Polish
 Prepare for deployment.
 
-- [ ] Task: Create Dockerfile
+- [~] Task: Create Dockerfile
     - [ ] Subtask: Create `.dockerignore`.
     - [ ] Subtask: Write multi-stage `Dockerfile` with targets for `cpu` and `gpu`.
     - [ ] Subtask: Verify build size and layer caching.
