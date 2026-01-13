@@ -3,10 +3,10 @@
 ## Phase 1: Core Setup & Configuration
 Establish the project skeleton, logging, and configuration management.
 
-- [ ] Task: Initialize Axum Server & Tracing
-    - [ ] Subtask: Add dependencies (`axum`, `tokio`, `tracing`, `tracing-subscriber`).
-    - [ ] Subtask: Write tests for a basic `/health` endpoint.
-    - [ ] Subtask: Implement `main.rs` to setup `tracing` and start `axum` server.
+- [x] Task: Initialize Axum Server & Tracing [56c5a61]
+    - [x] Subtask: Add dependencies (`axum`, `tokio`, `tracing`, `tracing-subscriber`).
+    - [x] Subtask: Write tests for a basic `/health` endpoint.
+    - [x] Subtask: Implement `main.rs` to setup `tracing` and start `axum` server.
 - [ ] Task: Implement Configuration System
     - [ ] Subtask: Add `config`, `serde`, `clap` dependencies.
     - [ ] Subtask: Define `AppConfig` struct.
