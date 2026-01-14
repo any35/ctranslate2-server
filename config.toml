@@ -1,13 +1,11 @@
-# Auto-generated configuration
-
-[server]
-host = "0.0.0.0"
-port = 8080
-
 default_model = "nllb"
 target_lang = "eng_Latn"
 device = "cpu"
 device_indices = [0]
+
+[server]
+host = "0.0.0.0"
+port = 8080
 
 [aliases]
 "nllb" = "nllb-200-distilled-1.3B"

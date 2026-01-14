@@ -16,6 +16,12 @@ A high-performance, OpenAI-compatible HTTP server for [CTranslate2](https://gith
     - Repetition Penalty
     - Target Language (for multilingual models like NLLB)
 
+## Installation
+
+```bash
+cargo install ctranslate2-server
+```
+
 ## Quick Start
 
 ### 1. Prepare Models
@@ -73,10 +79,6 @@ curl http://localhost:8080/v1/chat/completions \
 ## Configuration (`config.toml`)
 
 ```toml
-[server]
-host = "0.0.0.0"
-port = 8080
-
 # Global Defaults
 default_model = "nllb"
 target_lang = "eng_Latn"
@@ -84,6 +86,10 @@ device = "cpu"          # "cpu" or "cuda"
 device_indices = [0]    # GPU IDs
 beam_size = 5
 repetition_penalty = 1.2
+
+[server]
+host = "0.0.0.0"
+port = 8080
 
 [aliases]
 "nllb" = "nllb-200-distilled-600M"

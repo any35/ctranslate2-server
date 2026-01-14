@@ -9,7 +9,7 @@ echo "Testing model: $MODEL"
 echo "Content: $CONTENT"
 echo "---"
 
-curl -i -X POST "$URL" \
+curl -vi -X POST "$URL" \
   -H "Content-Type: application/json" \
   -d "{
     \"model\": \"$MODEL\",

@@ -49,3 +49,10 @@ Prepare for deployment.
     - [x] Subtask: Write multi-stage `Dockerfile` with targets for `cpu` and `gpu`.
     - [x] Subtask: Verify build size and layer caching.
 - [x] Task: Conductor - User Manual Verification 'Dockerization & Final Polish' (Protocol in workflow.md) [51968a4]
+
+## Phase 5: Refinement & Observability [checkpoint: pending]
+Improve visibility and robustness.
+
+- [x] Task: Add Request Logging & Performance Stats
+    - [x] Subtask: Log incoming requests (model, messages).
+    - [x] Subtask: Log timing and token stats (llama.cpp style) in `model.rs`.

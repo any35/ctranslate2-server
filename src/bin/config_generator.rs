@@ -4,23 +4,17 @@ use std::io::Write;
 fn main() -> std::io::Result<()> {
     let mut config = String::from("# Auto-generated configuration\n\n");
 
+    config.push_str("default_model = \"nllb\"\n");
+    config.push_str("target_lang = \"eng_Latn\"\n");
+    config.push_str("device = \"cpu\"\n");
+    config.push_str("device_indices = [0]\n\n");
+    config.push_str("beam_size = 5\n");
+    config.push_str("repetition_penalty = 1.2\n");
+    config.push_str("no_repeat_ngram_size = 0\n\n");
+
     config.push_str("[server]\n");
     config.push_str("host = \"0.0.0.0\"\n");
     config.push_str("port = 8080\n\n");
-
-    config.push_str("default_model = \"nllb\"\n");
-
-    config.push_str("target_lang = \"eng_Latn\"\n");
-
-    config.push_str("device = \"cpu\"\n");
-
-    config.push_str("device_indices = [0]\n\n");
-
-    config.push_str("beam_size = 5\n");
-
-    config.push_str("repetition_penalty = 1.2\n");
-
-    config.push_str("no_repeat_ngram_size = 0\n\n");
 
     config.push_str("[aliases]\n");
 

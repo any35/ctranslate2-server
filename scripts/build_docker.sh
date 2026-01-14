@@ -42,6 +42,6 @@ if [ "$PUSH" = true ]; then
   echo "Pushing images to Docker Hub..."
   docker push "${IMAGE_NAME}:latest"
   docker push "${IMAGE_NAME}:cpu"
-  # docker push "${IMAGE_NAME}:gpu"
+  docker push "${IMAGE_NAME}:gpu"
   echo "Push complete!"
 fi

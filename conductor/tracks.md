@@ -4,5 +4,13 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-## [x] Track: Foundational API and Model Infrastructure
-*Link: [./conductor/tracks/foundational_api_20260113/](./conductor/tracks/foundational_api_20260113/)*
+## Active Tracks
+
+(None)
+
+---
+
+## Archived Tracks
+
+### [x] Track: Foundational API and Model Infrastructure
+*Link: [./conductor/archive/foundational_api_20260113/](./conductor/archive/foundational_api_20260113/)*

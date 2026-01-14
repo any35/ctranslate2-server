@@ -4,6 +4,7 @@ FROM debian:bookworm-slim AS runtime-cpu
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     libssl3 \
+    libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -23,6 +24,7 @@ FROM nvidia/cuda:12.2.0-base-ubuntu22.04 AS runtime-gpu
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     libssl3 \
+    libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

@@ -1,13 +1,13 @@
 [package]
 name = "ctranslate2-server"
-version = "0.1.0"
+version = "0.1.2"
 edition = "2024"
 description = "A high-performance inference server for CTranslate2 models, compatible with OpenAI's API."
 license = "MIT"
-repository = "https://github.com/yourusername/ctranslate2-server"
+repository = "https://github.com/any35/ctranslate2-server"
 readme = "README.md"
 keywords = ["ctranslate2", "inference", "server", "openai", "nlp"]
-categories = ["web-programming::http-server", "science::robotics-and-ai"]
+categories = ["web-programming::http-server", "science", "text-processing"]
 exclude = [
   "models/",
   "conductor/",
@@ -30,6 +30,16 @@ tokio = { version = "1.49.0", features = ["full"] }
 tower = { version = "0.5.3", features = ["util"] }
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
+
+# Optimize dependencies for speed in dev
+[profile.dev]
+opt-level = 0
+debug = 0  # Reduce debug info for faster linking
+split-debuginfo = "unpacked" # Faster linking on Linux
+
+[profile.dev.package."*"]
+opt-level = 3 # Optimize dependencies even in dev (they don't change often) so the app runs fast
+debug = 0 # No debug info for deps
 
 [profile.release]
 lto = true
