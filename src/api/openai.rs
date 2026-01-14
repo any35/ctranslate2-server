@@ -78,6 +78,13 @@ pub async fn chat_completions(
     State(state): State<AppState>,
     Json(request): Json<ChatCompletionRequest>,
 ) -> Result<impl IntoResponse, ApiError> {
+    tracing::info!(
+        "request: model={} messages={} max_tokens={:?}",
+        request.model,
+        request.messages.len(),
+        request.max_tokens
+    );
+
     // specific logic: take the last user message as prompt
     let prompt = request
         .messages

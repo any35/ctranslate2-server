@@ -60,8 +60,13 @@ impl ModelManager {
 
     fn parse_device(device: &str) -> Device {
         match device.to_lowercase().as_str() {
-            "cuda" => Device::CUDA,
-            _ => Device::CPU,
+            "cuda" | "gpu" => Device::CUDA,
+            other => {
+                if other != "cpu" {
+                    tracing::warn!("Unknown device '{}', defaulting to CPU", other);
+                }
+                Device::CPU
+            }
         }
     }
 
@@ -105,6 +110,14 @@ impl ModelManager {
             .device_indices
             .as_ref()
             .unwrap_or(&self.config.device_indices);
+
+        tracing::info!(
+            "Loading model '{}' on device: {:?} (config: '{}'), indices: {:?}",
+            resolved_name,
+            device,
+            device_str,
+            device_indices
+        );
 
         // CTranslate2 loading is blocking
         let model_path_clone = model_path.clone();
@@ -216,9 +229,37 @@ impl ModelManager {
                 .take(prompts.len())
                 .collect();
 
-            translator
-                .translate_batch_with_target_prefix(&prompts, &target_prefixes, &options, None)
-                .map(|results| results.into_iter().map(|(s, _)| s).collect())
+            let start = std::time::Instant::now();
+            let result = translator
+                .translate_batch_with_target_prefix(&prompts, &target_prefixes, &options, None);
+            let duration = start.elapsed();
+
+            match result {
+                Ok(results) => {
+                    let texts: Vec<String> = results.iter().map(|(s, _)| s.clone()).collect();
+                    
+                    // Log stats similar to llama.cpp
+                    let total_input_chars: usize = prompts.iter().map(|p| p.len()).sum();
+                    let total_output_chars: usize = texts.iter().map(|t| t.len()).sum();
+                    let chars_per_sec = if duration.as_secs_f64() > 0.0 {
+                        total_output_chars as f64 / duration.as_secs_f64()
+                    } else {
+                        0.0
+                    };
+
+                    tracing::info!(
+                        "llama_print_timings: total time = {:.2} ms / {} runs ({} input chars, {} output chars, {:.2} chars/s)",
+                        duration.as_secs_f64() * 1000.0,
+                        prompts.len(),
+                        total_input_chars,
+                        total_output_chars,
+                        chars_per_sec
+                    );
+
+                    Ok(texts)
+                }
+                Err(e) => Err(e),
+            }
         })
         .await
         .map_err(|e| anyhow::anyhow!("Join error: {}", e))
